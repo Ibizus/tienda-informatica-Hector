@@ -30,9 +30,9 @@ class TiendaTest {
 			fabHome.beginTransaction();
 	
 			List<Fabricante> listFab = fabHome.findAll();
-		
-			
+
 			//TODO STREAMS
+
 			
 		
 			fabHome.commitTransaction();
@@ -54,6 +54,7 @@ class TiendaTest {
 			List<Producto> listProd = prodHome.findAll();		
 						
 			//TODO STREAMS
+
 		
 			prodHome.commitTransaction();
 		}
