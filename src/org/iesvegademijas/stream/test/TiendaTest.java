@@ -2,6 +2,7 @@ package org.iesvegademijas.stream.test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.text.DecimalFormat;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -154,7 +155,13 @@ class TiendaTest {
 			List<Producto> listProd = prodHome.findAll();
 			
 			//TODO STREAMS
-			
+			DecimalFormat df = new DecimalFormat("###.##");
+
+			List<String> listaPrecioDolares = listProd.stream().map(
+					p->  "Name: " + p.getNombre() + ", Price: " + df.format(p.getPrecio()*1.06) + "$").toList();
+
+			listaPrecioDolares.forEach(p -> System.out.println(p));
+
 			prodHome.commitTransaction();
 		}
 		catch (RuntimeException e) {
@@ -169,8 +176,7 @@ class TiendaTest {
 	 */
 	@Test
 	void test3() {
-		
-		
+
 		ProductoHome prodHome = new ProductoHome();	
 		try {
 			prodHome.beginTransaction();
@@ -178,7 +184,11 @@ class TiendaTest {
 			List<Producto> listProd = prodHome.findAll();		
 						
 			//TODO STREAMS
-		
+			List<String> listaNombreMayu = listProd.stream().map(
+					p -> "Nombre: " + p.getNombre().toUpperCase() + ", Precio: " + p.getPrecio()).toList();
+
+			listaNombreMayu.forEach(s -> System.out.println(s));
+
 			prodHome.commitTransaction();
 		}
 		catch (RuntimeException e) {
@@ -202,6 +212,10 @@ class TiendaTest {
 			List<Fabricante> listFab = fabHome.findAll();
 					
 			//TODO STREAMS
+			List<String> listaFabricantes = listFab.stream().map(
+					f -> "Fabricante: " + f.getNombre() + ", Cód: " + f.getNombre().substring(0,2).toUpperCase()).toList();
+
+			listaFabricantes.forEach(f -> System.out.println(f));
 					
 			fabHome.commitTransaction();
 		}
@@ -225,7 +239,11 @@ class TiendaTest {
 			List<Fabricante> listFab = fabHome.findAll();
 					
 			//TODO STREAMS
-		
+			List<String> listaFabConProductos = listFab.stream().filter(
+					f -> !f.getProductos().isEmpty()).map(
+							f -> "Cód Fabricante: " + f.getCodigo() + " (" + f.getNombre() + ")").toList();
+
+			listaFabConProductos.forEach(f -> System.out.println(f));
 			fabHome.commitTransaction();
 		}
 		catch (RuntimeException e) {
@@ -248,6 +266,9 @@ class TiendaTest {
 			List<Fabricante> listFab = fabHome.findAll();
 					
 			//TODO STREAMS
+			//List<String> listaFabricantes = listFab.stream().sorted(f->f.getNombre()).toList();
+
+			//listaFabricantes.forEach(f -> System.out.println(f));
 		
 			fabHome.commitTransaction();
 		}
