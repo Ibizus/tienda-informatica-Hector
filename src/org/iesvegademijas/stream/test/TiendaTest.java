@@ -119,19 +119,28 @@ class TiendaTest {
 			List<Producto> listProd = prodHome.findAll();
 			
 			//TODO STREAMS
-	
-			
+			List<String> listaNombrePrecio = listProd.stream().map(
+					p -> "Nombre: " + p.getNombre() + ", Precio: " + p.getPrecio()).toList();
+
+			Set<String[]> setNombrePrecio = listProd.stream().map(
+					producto -> new String[]{producto.getNombre(), Double.toString(producto.getPrecio())}).collect(toSet());
+
+			System.out.println(listProd.size());
+
+			listaNombrePrecio.forEach(s -> System.out.println(s));
+
+			System.out.println("\n\n\n");
+
+			setNombrePrecio.forEach(strings -> System.out.println("Nombre: " + strings[0] + ", Precio: " + strings[1]));
+
 			prodHome.commitTransaction();
 		}
 		catch (RuntimeException e) {
 			prodHome.rollbackTransaction();
 		    throw e; // or display error message
 		}
-		
-	
 	}
-	
-	
+
 	/**
 	 * 2. Devuelve una lista de Producto completa con el precio de euros convertido a dólares .
 	 */
