@@ -3,11 +3,7 @@ package org.iesvegademijas.stream.test;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.text.DecimalFormat;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.*;
@@ -266,9 +262,10 @@ class TiendaTest {
 			List<Fabricante> listFab = fabHome.findAll();
 					
 			//TODO STREAMS
-			//List<String> listaFabricantes = listFab.stream().sorted(f->f.getNombre()).toList();
+			List<String> listaFabricantesOrder = listFab.stream().sorted(comparing(Fabricante::getNombre).reversed()).map(
+					f -> f.getNombre()).toList();
 
-			//listaFabricantes.forEach(f -> System.out.println(f));
+			listaFabricantesOrder.forEach(f -> System.out.println(f));
 		
 			fabHome.commitTransaction();
 		}
@@ -291,7 +288,12 @@ class TiendaTest {
 			List<Producto> listProd = prodHome.findAll();		
 						
 			//TODO STREAMS
-			
+
+			List<String> listaProdNombrePrecio = listProd.stream().sorted(comparing(Producto::getNombre).thenComparing(comparing(Producto::getPrecio).reversed())).map(
+					p -> p.getNombre() + " => " + p.getPrecio() + "€").toList();
+
+			listaProdNombrePrecio.forEach(p -> System.out.println(p));
+
 			prodHome.commitTransaction();
 		}
 		catch (RuntimeException e) {
