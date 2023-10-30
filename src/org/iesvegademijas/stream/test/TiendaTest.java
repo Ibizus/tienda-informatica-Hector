@@ -851,12 +851,12 @@ class TiendaTest {
 	 * El listado debe mostrarse en formato tabla. Para ello, procesa las longitudes máximas de los diferentes campos a presentar y compensa mediante la inclusión de espacios en blanco.
 	 * La salida debe quedar tabulada como sigue:
 
-Producto                Precio             Fabricante
------------------------------------------------------
-GeForce GTX 1080 Xtreme|611.5500000000001 |Crucial
-Portátil Yoga 520      |452.79            |Lenovo
-Portátil Ideapd 320    |359.64000000000004|Lenovo
-Monitor 27 LED Full HD |199.25190000000003|Asus
+	Producto                Precio             Fabricante
+	-----------------------------------------------------
+	GeForce GTX 1080 Xtreme|611.5500000000001 |Crucial
+	Portátil Yoga 520      |452.79            |Lenovo
+	Portátil Ideapd 320    |359.64000000000004|Lenovo
+	Monitor 27 LED Full HD |199.25190000000003|Asus
 
 	 */		
 	@Test
@@ -867,17 +867,19 @@ Monitor 27 LED Full HD |199.25190000000003|Asus
 			prodHome.beginTransaction();
 		
 			List<Producto> listProd = prodHome.findAll();
-			
+
 			//TODO STREAMS
-			List<Integer> medidasMax = new ArrayList<>();
+			List<Optional> medidasMax = new ArrayList<>();
 
-					medidasMax.add(listProd.stream().sorted(comparing(p -> p.getNombre())).findFirst());
+			medidasMax.add(listProd.stream().max(comparing(p -> p.getNombre().length())).map(p -> p.getNombre().length()));
+			medidasMax.add(listProd.stream().max(comparing(p -> p.getPrecio())).map(p -> String.valueOf(p.getPrecio()*100).length()));
+			medidasMax.add(listProd.stream().max(comparing(p -> p.getFabricante().getNombre().length())).map(p -> p.getFabricante().getNombre().length()));
+			System.out.println(medidasMax);
 
-			List<String> tablaProductosMas180 = listProd.stream()
-					.filter(p -> p.getPrecio()>=180)
-					.sorted(comparing(Producto::getPrecio).reversed().thenComparing(Producto::getNombre))
-					.map());
-
+			//List<String> tablaProductosMas180 = listProd.stream()
+			//		.filter(p -> p.getPrecio()>=180)
+			//		.sorted(comparing(Producto::getPrecio).reversed().thenComparing(Producto::getNombre))
+			//		.map(p-> p.getNombre() + medidasMax.get(0)-p.getNombre().length())*" ");
 
 			prodHome.commitTransaction();
 		}
@@ -953,6 +955,10 @@ Fabricante: Xiaomi
 			List<Fabricante> listFab = fabHome.findAll();
 					
 			//TODO STREAMS
+			List<String> tablaFabricantesyProductos = listFab.stream()
+					.map(f -> "\nFabricante: " + f.getNombre() + "\n\n\tProductos:" + f.getProductos().stream().map(p -> "\n\t" + p.getNombre() + "").toList()).toList();
+
+			tablaFabricantesyProductos.forEach(System.out::println);
 								
 			fabHome.commitTransaction();
 		}
@@ -976,6 +982,8 @@ Fabricante: Xiaomi
 			List<Fabricante> listFab = fabHome.findAll();
 					
 			//TODO STREAMS
+			List<String> listaEmptyFab = listFab.stream().filter(fabricante -> fabricante.getProductos().isEmpty()).map(f -> f.getNombre()).toList();
+			listaEmptyFab.forEach(System.out::println);
 								
 			fabHome.commitTransaction();
 		}
