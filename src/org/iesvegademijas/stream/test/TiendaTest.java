@@ -400,7 +400,11 @@ class TiendaTest {
 					p -> "Nombre: " + p.getNombre() + ". Precio: " + p.getPrecio()).toList();
 
 			productoMasCaro.forEach(System.out::println);
-			
+
+			// OTRA FORMA MÁS EFICIENTE PARA PROTEGERNOS CONTRA UNA COLECCIÓN VACÍA:
+			Optional<Producto> optionalProducto = listProd.stream().sorted(comparing(Producto::getPrecio).reversed()).findFirst();
+			optionalProducto.ifPresent(producto -> System.out.println(producto.getNombre()));
+
 			prodHome.commitTransaction();
 		}
 		catch (RuntimeException e) {
@@ -594,7 +598,7 @@ class TiendaTest {
 			List<String> listaPrecioCentimos = listProd.stream().map(
 					p->  "Nombre: " + p.getNombre() + ", Precio: " + p.getPrecio()*100 + " cents").toList();
 
-			listaPrecioCentimos.forEach(p -> System.out.println(p));
+			listaPrecioCentimos.forEach(System.out::println);
 				
 			prodHome.commitTransaction();
 		}
@@ -650,9 +654,9 @@ class TiendaTest {
 			
 			//TODO STREAMS
 			List<String> listaPortatiles = listProd.stream().filter(p -> p.getNombre().contains("Portátil")).map(
-					p -> p.getNombre()).toList();
+					Producto::getNombre).toList();
 
-			listaPortatiles.forEach(p -> System.out.println(p));
+			listaPortatiles.forEach(System.out::println);
 
 			prodHome.commitTransaction();
 		}
@@ -680,7 +684,7 @@ class TiendaTest {
 			List<String> listaMonitores = listProd.stream().filter(p -> p.getNombre().contains("Monitor") && p.getPrecio()<215).map(
 					p -> p.getNombre() + ", precio: " + p.getPrecio()).toList();
 
-			listaMonitores.forEach(p -> System.out.println(p));
+			listaMonitores.forEach(System.out::println);
 				
 			prodHome.commitTransaction();
 		}
@@ -695,6 +699,7 @@ class TiendaTest {
 	 * 22. Lista el nombre y el precio de todos los productos que tengan un precio mayor o igual a 180€. 
 	 * Ordene el resultado en primer lugar por el precio (en orden descendente) y en segundo lugar por el nombre (en orden ascendente).
 	 */
+	@Test
 	void test22() {
 		
 		
@@ -705,6 +710,13 @@ class TiendaTest {
 			List<Producto> listProd = prodHome.findAll();
 			
 			//TODO STREAMS
+			List<String> productosMas180order = listProd.stream()
+					.filter(p -> p.getPrecio()>=180)
+					.sorted(comparing(Producto::getPrecio).reversed().thenComparing(comparing(Producto::getNombre)))
+					.map(p -> p.getNombre() + ", precio: " + p.getPrecio())
+					.toList();
+
+			productosMas180order.forEach(System.out::println);
 				
 			prodHome.commitTransaction();
 		}
@@ -729,6 +741,10 @@ class TiendaTest {
 			List<Producto> listProd = prodHome.findAll();
 			
 			//TODO STREAMS
+			List<String> listaProductosPorFabricante = listProd.stream().sorted(comparing(p -> p.getFabricante().getNombre())).map(
+					p -> p.getNombre() + ", precio: " + p.getPrecio() + "€, Fab: " + p.getFabricante().getNombre().toUpperCase()).toList();
+
+			listaProductosPorFabricante.forEach(System.out::println);
 			
 			prodHome.commitTransaction();
 		}
@@ -752,6 +768,10 @@ class TiendaTest {
 			List<Producto> listProd = prodHome.findAll();
 			
 			//TODO STREAMS
+			Optional<String> productoMasCaro = listProd.stream().max(comparing(Producto::getPrecio)).map(
+					p -> p.getNombre() + ", precio: " + p.getPrecio() + "€, Fab: " + p.getFabricante().getNombre());
+
+			productoMasCaro.ifPresent(System.out::println);
 			
 			prodHome.commitTransaction();
 		}
@@ -775,6 +795,12 @@ class TiendaTest {
 			List<Producto> listProd = prodHome.findAll();
 			
 			//TODO STREAMS
+			List<String> productosCrucialMas200 = listProd.stream()
+					.filter(p -> p.getFabricante().getNombre().equalsIgnoreCase("crucial") && p.getPrecio()>200)
+					.map(p -> p.getNombre() + ", precio: " + p.getPrecio() + "€, Fab: " + p.getFabricante().getNombre())
+					.toList();
+
+			productosCrucialMas200.forEach(System.out::println);
 			
 			prodHome.commitTransaction();
 		}
@@ -798,6 +824,17 @@ class TiendaTest {
 			List<Producto> listProd = prodHome.findAll();
 			
 			//TODO STREAMS
+			List<String> fabricantesSeleccionados = new ArrayList<>();
+			fabricantesSeleccionados.add("asus");
+			fabricantesSeleccionados.add("hewlett-packard");
+			fabricantesSeleccionados.add("seagate");
+
+			List<String> productosFabSeleccionados = listProd.stream()
+					.filter(p -> fabricantesSeleccionados.contains(p.getFabricante().getNombre().toLowerCase()))
+					.map(p -> p.getNombre() + ", precio: " + p.getPrecio() + "€, Fab: " + p.getFabricante().getNombre())
+					.toList();
+
+			productosFabSeleccionados.forEach(System.out::println);
 			
 			prodHome.commitTransaction();
 		}
@@ -832,7 +869,16 @@ Monitor 27 LED Full HD |199.25190000000003|Asus
 			List<Producto> listProd = prodHome.findAll();
 			
 			//TODO STREAMS
-			
+			List<Integer> medidasMax = new ArrayList<>();
+
+					medidasMax.add(listProd.stream().sorted(comparing(p -> p.getNombre())).findFirst());
+
+			List<String> tablaProductosMas180 = listProd.stream()
+					.filter(p -> p.getPrecio()>=180)
+					.sorted(comparing(Producto::getPrecio).reversed().thenComparing(Producto::getNombre))
+					.map());
+
+
 			prodHome.commitTransaction();
 		}
 		catch (RuntimeException e) {
