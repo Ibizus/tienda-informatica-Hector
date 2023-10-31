@@ -881,6 +881,8 @@ class TiendaTest {
 			//		.sorted(comparing(Producto::getPrecio).reversed().thenComparing(Producto::getNombre))
 			//		.map(p-> p.getNombre() + medidasMax.get(0)-p.getNombre().length())*" ");
 
+			// " ".repeat
+
 			prodHome.commitTransaction();
 		}
 		catch (RuntimeException e) {
@@ -959,7 +961,8 @@ Fabricante: Xiaomi
 					.map(f -> "\nFabricante: " + f.getNombre() + "\n\n\tProductos:" + f.getProductos().stream().map(p -> "\n\t" + p.getNombre() + "").toList()).toList();
 
 			tablaFabricantesyProductos.forEach(System.out::println);
-								
+			// collect(joinning)
+
 			fabHome.commitTransaction();
 		}
 		catch (RuntimeException e) {
@@ -1006,6 +1009,8 @@ Fabricante: Xiaomi
 			List<Producto> listProd = prodHome.findAll();		
 						
 			//TODO STREAMS
+			long totalProductos = listProd.stream().count();
+			System.out.println(totalProductos);
 			
 			prodHome.commitTransaction();
 		}
@@ -1030,6 +1035,8 @@ Fabricante: Xiaomi
 			List<Producto> listProd = prodHome.findAll();		
 						
 			//TODO STREAMS
+			long totalFabricantesProd = listProd.stream().map(p -> p.getFabricante()).distinct().count();
+			System.out.println(totalFabricantesProd);
 			
 			prodHome.commitTransaction();
 		}
@@ -1053,14 +1060,15 @@ Fabricante: Xiaomi
 			List<Producto> listProd = prodHome.findAll();		
 						
 			//TODO STREAMS
-			
+			double mediaPrecioProductos = listProd.stream().map(Producto::getPrecio).reduce(0.0, Double::sum)/listProd.size();
+			System.out.println(mediaPrecioProductos);
+
 			prodHome.commitTransaction();
 		}
 		catch (RuntimeException e) {
 			prodHome.rollbackTransaction();
 		    throw e; // or display error message
 		}
-		
 	}
 	
 	/**
@@ -1076,7 +1084,9 @@ Fabricante: Xiaomi
 			List<Producto> listProd = prodHome.findAll();		
 						
 			//TODO STREAMS
-			
+			double precioMasBarato = listProd.stream().min(comparing(Producto::getPrecio)).map(Producto::getPrecio).get();
+			System.out.println(precioMasBarato);
+
 			prodHome.commitTransaction();
 		}
 		catch (RuntimeException e) {
@@ -1099,6 +1109,8 @@ Fabricante: Xiaomi
 			List<Producto> listProd = prodHome.findAll();		
 						
 			//TODO STREAMS
+			double sumaPrecioProductos = listProd.stream().map(Producto::getPrecio).reduce(0.0, Double::sum);
+			System.out.println(sumaPrecioProductos);
 			
 			prodHome.commitTransaction();
 		}
@@ -1122,6 +1134,10 @@ Fabricante: Xiaomi
 			List<Producto> listProd = prodHome.findAll();		
 						
 			//TODO STREAMS
+			long numProductosAsus = listProd.stream()
+					.filter(p -> p.getFabricante().getNombre().equalsIgnoreCase("asus")).count();
+
+			System.out.println(numProductosAsus);
 			
 			prodHome.commitTransaction();
 		}
@@ -1145,6 +1161,14 @@ Fabricante: Xiaomi
 			List<Producto> listProd = prodHome.findAll();		
 						
 			//TODO STREAMS
+			double mediaProductosAsus = listProd.stream()
+					.filter(p -> p.getFabricante().getNombre().equalsIgnoreCase("asus"))
+					.map(Producto::getPrecio)
+					.reduce(0.0, Double::sum);
+
+			// FALTA LA DIVISION ENTRE EL NUMERO DE PRODUCTOS ENCONTRADOS
+
+			System.out.println(mediaProductosAsus);
 			
 			prodHome.commitTransaction();
 		}
