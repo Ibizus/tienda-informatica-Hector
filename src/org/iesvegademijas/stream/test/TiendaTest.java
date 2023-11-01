@@ -876,10 +876,12 @@ class TiendaTest {
 			medidasMax.add(listProd.stream().max(comparing(p -> p.getFabricante().getNombre().length())).map(p -> p.getFabricante().getNombre().length()));
 			System.out.println(medidasMax);
 
-			//List<String> tablaProductosMas180 = listProd.stream()
-			//		.filter(p -> p.getPrecio()>=180)
-			//		.sorted(comparing(Producto::getPrecio).reversed().thenComparing(Producto::getNombre))
-			//		.map(p-> p.getNombre() + medidasMax.get(0)-p.getNombre().length())*" ");
+			List<String> tablaProductosMas180 = listProd.stream()
+					.filter(p -> p.getPrecio()>=180)
+					.sorted(comparing(Producto::getPrecio).reversed().thenComparing(Producto::getNombre))
+					.map(p-> p.getNombre() + " ".repeat(medidasMax.get(0)-p.getNombre().length()) +
+
+
 
 			// " ".repeat
 
@@ -1161,14 +1163,18 @@ Fabricante: Xiaomi
 			List<Producto> listProd = prodHome.findAll();		
 						
 			//TODO STREAMS
-			double mediaProductosAsus = listProd.stream()
+			//PRECIO TOTAL PRODUCTOS ASUS
+			double precioTotalProductosAsus = listProd.stream()
 					.filter(p -> p.getFabricante().getNombre().equalsIgnoreCase("asus"))
 					.map(Producto::getPrecio)
 					.reduce(0.0, Double::sum);
-
+			// NUMERO DE PRODUCTOS ASUS:
+			long numTotalProductosAsus = listProd.stream()
+					.filter(p -> p.getFabricante().getNombre().equalsIgnoreCase("asus"))
+					.count();
 			// FALTA LA DIVISION ENTRE EL NUMERO DE PRODUCTOS ENCONTRADOS
-
-			System.out.println(mediaProductosAsus);
+			double mediaPrecioProdAsus = precioTotalProductosAsus/numTotalProductosAsus;
+			System.out.println(mediaPrecioProdAsus);
 			
 			prodHome.commitTransaction();
 		}
@@ -1194,6 +1200,11 @@ Fabricante: Xiaomi
 			List<Producto> listProd = prodHome.findAll();
 						
 			//TODO STREAMS
+			DoubleSummaryStatistics crucialStatics = listProd.stream()
+					.filter(p -> p.getFabricante().getNombre().equalsIgnoreCase("crucial"))
+					.collect(summarizingDouble(Producto::getPrecio));
+
+			System.out.println(crucialStatics);
 			
 			prodHome.commitTransaction();
 		}
