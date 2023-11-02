@@ -23,7 +23,7 @@ class TiendaTest {
 	// ANTES DE LANZAR LOS TEST: sudo docker start mysqldb
 	
 	@Test
-	void testSkeletonFrabricante() {
+	void testSkeletonFabricante() {
 	
 		FabricanteHome fabHome = new FabricanteHome();
 		
@@ -112,21 +112,15 @@ class TiendaTest {
 			prodHome.beginTransaction();
 			
 			List<Producto> listProd = prodHome.findAll();
-			
-			//TODO STREAMS
+
 			List<String> listaNombrePrecio = listProd.stream().map(
 					p -> "Nombre: " + p.getNombre() + ", Precio: " + p.getPrecio()).toList();
 
-			Set<String[]> setNombrePrecio = listProd.stream().map(
-					producto -> new String[]{producto.getNombre(), Double.toString(producto.getPrecio())}).collect(toSet());
+			Set<String[]> setNombrePrecio = listProd.stream()
+					.map(producto -> new String[]{"Nombre: " + producto.getNombre(), ", Precio: " + Double.toString(producto.getPrecio())})
+					.collect(toSet());
 
-			System.out.println(listProd.size());
-
-			listaNombrePrecio.forEach(s -> System.out.println(s));
-
-			System.out.println("\n\n\n");
-
-			setNombrePrecio.forEach(strings -> System.out.println("Nombre: " + strings[0] + ", Precio: " + strings[1]));
+			listaNombrePrecio.forEach(System.out::println);
 
 			prodHome.commitTransaction();
 		}
@@ -137,7 +131,7 @@ class TiendaTest {
 	}
 
 	/**
-	 * 2. Devuelve una lista de Producto completa con el precio de euros convertido a dólares .
+	 * 2. Devuelve una lista de Producto completa con el precio de euros convertido a dólares.
 	 */
 	@Test
 	void test2() {
@@ -147,8 +141,7 @@ class TiendaTest {
 		try {
 			prodHome.beginTransaction();			
 			List<Producto> listProd = prodHome.findAll();
-			
-			//TODO STREAMS
+
 			DecimalFormat df = new DecimalFormat("###.##");
 
 			List<String> listaPrecioDolares = listProd.stream().map(
@@ -869,38 +862,24 @@ class TiendaTest {
 		
 			List<Producto> listProd = prodHome.findAll();
 
-			//TODO STREAMS
 			List<Integer> medidasMax = new ArrayList<>();
 
 			medidasMax.add(listProd.stream().mapToInt(p -> p.getNombre().length()).max().getAsInt());
 			medidasMax.add(listProd.stream().mapToInt(p -> String.valueOf(p.getPrecio()).length()).max().getAsInt());
 			medidasMax.add(listProd.stream().mapToInt(p -> p.getFabricante().getNombre().length()).max().getAsInt());
-			System.out.println(medidasMax);
 
-
-			/*String tablaProductosMas180 = listProd.stream()
+			// " ".repeat
+			String tablaProductosMas180 = listProd.stream()
 					.filter(p -> p.getPrecio()>=180)
 					.sorted(comparing(Producto::getPrecio).reversed().thenComparing(Producto::getNombre))
 					.map(p-> p.getNombre() + " ".repeat(medidasMax.get(0)-(p.getNombre().length())) +
-							"|" + p.getPrecio() + " ".repeat(medidasMax.get(1)-(Double.toString(p.getPrecio()).length() +
-							"|" + p.getFabricante().getNombre() + " ".repeat(medidasMax.get(2)-(p.getFabricante().getNombre().length())) + "\n")).collect(joinning));*/
+							"|" + p.getPrecio() + " ".repeat(medidasMax.get(1)-((String.valueOf(p.getPrecio())).length())) +
+							"|" + p.getFabricante().getNombre() + " ".repeat(medidasMax.get(2)-(p.getFabricante().getNombre().length())) + "\n").collect(joining());
 
 
-			/*String header = "Producto                Precio             Fabricante\n" +
+			String header = "Producto                       Precio      Fabricante\n" +
 					"-----------------------------------------------------\n";
-			System.out.println("" + header + tablaProductosMas180.toString());*/
-
-			// " ".repeat
-
-
-			/*
-				██████╗░███████╗███╗░░██╗██████╗░██╗███████╗███╗░░██╗████████╗███████╗
-				██╔══██╗██╔════╝████╗░██║██╔══██╗██║██╔════╝████╗░██║╚══██╔══╝██╔════╝
-				██████╔╝█████╗░░██╔██╗██║██║░░██║██║█████╗░░██╔██╗██║░░░██║░░░█████╗░░
-				██╔═══╝░██╔══╝░░██║╚████║██║░░██║██║██╔══╝░░██║╚████║░░░██║░░░██╔══╝░░
-				██║░░░░░███████╗██║░╚███║██████╔╝██║███████╗██║░╚███║░░░██║░░░███████╗
-				╚═╝░░░░░╚══════╝╚═╝░░╚══╝╚═════╝░╚═╝╚══════╝╚═╝░░╚══╝░░░╚═╝░░░╚══════╝
-			*/
+			System.out.println("" + header + tablaProductosMas180.toString());
 
 			prodHome.commitTransaction();
 		}
@@ -974,22 +953,12 @@ Fabricante: Xiaomi
 			fabHome.beginTransaction();
 	
 			List<Fabricante> listFab = fabHome.findAll();
-					
-			//TODO STREAMS
+
+			// collect(joinning)
 			List<String> tablaFabricantesyProductos = listFab.stream()
-					.map(f -> "\nFabricante: " + f.getNombre() + "\n\n\tProductos:" + f.getProductos().stream().map(p -> "\n\t" + p.getNombre() + "").toList()).toList();
+					.map(f -> "\nFabricante: " + f.getNombre() + "\n\n\tProductos:" + f.getProductos().stream().map(p -> "\n\t" + p.getNombre() + "").collect(joining())).toList();
 
 			tablaFabricantesyProductos.forEach(System.out::println);
-			// collect(joinning)
-
-			/*  FALTA QUITAR LAS LLAVES
-				██████╗░███████╗███╗░░██╗██████╗░██╗███████╗███╗░░██╗████████╗███████╗
-				██╔══██╗██╔════╝████╗░██║██╔══██╗██║██╔════╝████╗░██║╚══██╔══╝██╔════╝
-				██████╔╝█████╗░░██╔██╗██║██║░░██║██║█████╗░░██╔██╗██║░░░██║░░░█████╗░░
-				██╔═══╝░██╔══╝░░██║╚████║██║░░██║██║██╔══╝░░██║╚████║░░░██║░░░██╔══╝░░
-				██║░░░░░███████╗██║░╚███║██████╔╝██║███████╗██║░╚███║░░░██║░░░███████╗
-				╚═╝░░░░░╚══════╝╚═╝░░╚══╝╚═════╝░╚═╝╚══════╝╚═╝░░╚══╝░░░╚═╝░░░╚══════╝
-			*/
 
 			fabHome.commitTransaction();
 		}
