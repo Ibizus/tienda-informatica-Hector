@@ -31,8 +31,6 @@ class TiendaTest {
 			fabHome.beginTransaction();
 	
 			List<Fabricante> listFab = fabHome.findAll();
-
-			//TODO STREAMS
 		
 			fabHome.commitTransaction();
 		}
@@ -50,9 +48,7 @@ class TiendaTest {
 		try {
 			prodHome.beginTransaction();
 		
-			List<Producto> listProd = prodHome.findAll();		
-						
-			//TODO STREAMS
+			List<Producto> listProd = prodHome.findAll();
 
 			prodHome.commitTransaction();
 		}
@@ -60,7 +56,6 @@ class TiendaTest {
 			prodHome.rollbackTransaction();
 		    throw e; // or display error message
 		}
-		
 	}
 	
 	@Test
@@ -112,14 +107,11 @@ class TiendaTest {
 			prodHome.beginTransaction();
 			
 			List<Producto> listProd = prodHome.findAll();
-
-			List<String> listaNombrePrecio = listProd.stream().map(
-					p -> "Nombre: " + p.getNombre() + ", Precio: " + p.getPrecio()).toList();
-
-			Set<String[]> setNombrePrecio = listProd.stream()
-					.map(producto -> new String[]{"Nombre: " + producto.getNombre(), ", Precio: " + Double.toString(producto.getPrecio())})
-					.collect(toSet());
-
+			// STREAM:
+			List<String> listaNombrePrecio = listProd.stream()
+					.map(p -> "Nombre: " + p.getNombre() + ", Precio: " + p.getPrecio())
+					.toList();
+			// CONSOLE OUTPUT:
 			listaNombrePrecio.forEach(System.out::println);
 
 			prodHome.commitTransaction();
@@ -143,11 +135,11 @@ class TiendaTest {
 			List<Producto> listProd = prodHome.findAll();
 
 			DecimalFormat df = new DecimalFormat("###.##");
-
+			// STREAM:
 			List<String> listaPrecioDolares = listProd.stream().map(
-					p->  "Name: " + p.getNombre() + ", Price: " + df.format(p.getPrecio()*1.06) + "$").toList();
-
-			listaPrecioDolares.forEach(p -> System.out.println(p));
+					p->  "Name: " + p.getNombre() + ", Ref: " + p.getCodigo() + ", Price: " + df.format(p.getPrecio()*1.06) + "$, Manufacturer: " + p.getFabricante().getNombre()).toList();
+			// CONSOLE OUTPUT:
+			listaPrecioDolares.forEach(System.out::println);
 
 			prodHome.commitTransaction();
 		}
@@ -155,7 +147,6 @@ class TiendaTest {
 			prodHome.rollbackTransaction();
 		    throw e; // or display error message
 		}
-		
 	}
 	
 	/**
@@ -168,13 +159,12 @@ class TiendaTest {
 		try {
 			prodHome.beginTransaction();
 		
-			List<Producto> listProd = prodHome.findAll();		
-						
-			//TODO STREAMS
+			List<Producto> listProd = prodHome.findAll();
+			// STREAM:
 			List<String> listaNombreMayu = listProd.stream().map(
 					p -> "Nombre: " + p.getNombre().toUpperCase() + ", Precio: " + p.getPrecio()).toList();
-
-			listaNombreMayu.forEach(s -> System.out.println(s));
+			// CONSOLE OUTPUT:
+			listaNombreMayu.forEach(System.out::println);
 
 			prodHome.commitTransaction();
 		}
@@ -182,7 +172,6 @@ class TiendaTest {
 			prodHome.rollbackTransaction();
 		    throw e; // or display error message
 		}
-		
 	}
 	
 	/**
@@ -197,13 +186,16 @@ class TiendaTest {
 			fabHome.beginTransaction();
 	
 			List<Fabricante> listFab = fabHome.findAll();
-					
-			//TODO STREAMS
+
+			// STREAM:
 			List<String> listaFabricantes = listFab.stream().map(
 					f -> "Fabricante: " + f.getNombre() + ", Cód: " + f.getNombre().substring(0,2).toUpperCase()).toList();
+			// CONSOLE OUTPUT:
+			listaFabricantes.forEach(System.out::println);
+			// ASSERTION:
+			String expectedOutput = "[Fabricante: Asus, Cód: AS, Fabricante: Lenovo, Cód: LE, Fabricante: Hewlett-Packard, Cód: HE, Fabricante: Samsung, Cód: SA, Fabricante: Seagate, Cód: SE, Fabricante: Crucial, Cód: CR, Fabricante: Gigabyte, Cód: GI, Fabricante: Huawei, Cód: HU, Fabricante: Xiaomi, Cód: XI]";
+			assertEquals(expectedOutput,listaFabricantes.toString());
 
-			listaFabricantes.forEach(f -> System.out.println(f));
-					
 			fabHome.commitTransaction();
 		}
 		catch (RuntimeException e) {
@@ -224,13 +216,13 @@ class TiendaTest {
 			fabHome.beginTransaction();
 	
 			List<Fabricante> listFab = fabHome.findAll();
-					
-			//TODO STREAMS
-			List<String> listaFabConProductos = listFab.stream().filter(
-					f -> !f.getProductos().isEmpty()).map(
-							f -> "Cód Fabricante: " + f.getCodigo() + " (" + f.getNombre() + ")").toList();
-
-			listaFabConProductos.forEach(f -> System.out.println(f));
+			// STREAM:
+			List<String> listaFabConProductos = listFab.stream()
+					.filter(f -> !f.getProductos().isEmpty())
+					.map(f -> "Cód Fabricante: " + f.getCodigo() + " (" + f.getNombre() + ")")
+					.toList();
+			// CONSOLE OUTPUT:
+			listaFabConProductos.forEach(System.out::println);
 			fabHome.commitTransaction();
 		}
 		catch (RuntimeException e) {
@@ -251,12 +243,25 @@ class TiendaTest {
 			fabHome.beginTransaction();
 	
 			List<Fabricante> listFab = fabHome.findAll();
-					
-			//TODO STREAMS
-			List<String> listaFabricantesOrder = listFab.stream().sorted(comparing(Fabricante::getNombre).reversed()).map(
-					f -> f.getNombre()).toList();
 
-			listaFabricantesOrder.forEach(f -> System.out.println(f));
+			// STREAM:
+			List<String> listaFabricantesOrder = listFab.stream()
+					.sorted(comparing(Fabricante::getNombre).reversed())
+					.map(f -> f.getNombre())
+					.toList();
+			// CONSOLE OUTPUT:
+			listaFabricantesOrder.forEach(System.out::println);
+			// ASSERTION:
+			String expectedOutput = "[Xiaomi, " +
+									"Seagate, " +
+									"Samsung, " +
+									"Lenovo, " +
+									"Huawei, " +
+									"Hewlett-Packard, " +
+									"Gigabyte, " +
+									"Crucial, " +
+									"Asus]";
+			assertEquals(expectedOutput,listaFabricantesOrder.toString());
 		
 			fabHome.commitTransaction();
 		}
@@ -276,14 +281,15 @@ class TiendaTest {
 		try {
 			prodHome.beginTransaction();
 		
-			List<Producto> listProd = prodHome.findAll();		
-						
-			//TODO STREAMS
+			List<Producto> listProd = prodHome.findAll();
 
-			List<String> listaProdNombrePrecio = listProd.stream().sorted(comparing(Producto::getNombre).thenComparing(comparing(Producto::getPrecio).reversed())).map(
-					p -> p.getNombre() + " => " + p.getPrecio() + "€").toList();
-
-			listaProdNombrePrecio.forEach(p -> System.out.println(p));
+			// STREAM:
+			List<String> listaProdNombrePrecio = listProd.stream()
+					.sorted(comparing(Producto::getNombre).thenComparing(comparing(Producto::getPrecio).reversed()))
+					.map(p -> p.getNombre() + " => " + p.getPrecio() + "€")
+					.toList();
+			// CONSOLE OUTPUT:
+			listaProdNombrePrecio.forEach(System.out::println);
 
 			prodHome.commitTransaction();
 		}
@@ -291,7 +297,6 @@ class TiendaTest {
 			prodHome.rollbackTransaction();
 		    throw e; // or display error message
 		}
-		
 	}
 	
 	/**
@@ -304,15 +309,24 @@ class TiendaTest {
 		
 		try {
 			fabHome.beginTransaction();
-	
-			List<Fabricante> listFab = fabHome.findAll();
-					
-			//TODO STREAMS
-			List<String> lista5fab = listFab.stream().sorted(comparing(Fabricante::getNombre)).limit(5).map(
-					f -> "Name: " + f.getNombre() + ", Code: " + f.getCodigo()).toList();
 
-			lista5fab.forEach(f -> System.out.println(f));
-		
+			List<Fabricante> listFab = fabHome.findAll();
+			// STREAM:
+			List<String> lista5fab = listFab.stream()
+					.sorted(comparing(Fabricante::getNombre))
+					.limit(5)
+					.map(f -> "Name: " + f.getNombre() + ", Code: " + f.getCodigo())
+					.toList();
+			// CONSOLE OUTPUT:
+			lista5fab.forEach(System.out::println);
+			// ASSERTION:
+			String expectedOutput = "[Name: Asus, Code: 1, " +
+									"Name: Crucial, Code: 6, " +
+									"Name: Gigabyte, Code: 7, " +
+									"Name: Hewlett-Packard, Code: 3, " +
+									"Name: Huawei, Code: 8]";
+			assertEquals(expectedOutput,lista5fab.toString());
+
 			fabHome.commitTransaction();
 		}
 		catch (RuntimeException e) {
@@ -322,7 +336,7 @@ class TiendaTest {
 	}
 	
 	/**
-	 * 9.Devuelve una lista con 2 fabricantes a partir del cuarto fabricante. El cuarto fabricante también se debe incluir en la respuesta.
+	 * 9. Devuelve una lista con 2 fabricantes a partir del cuarto fabricante. El cuarto fabricante también se debe incluir en la respuesta.
 	 */
 	@Test
 	void test9() {
@@ -331,15 +345,24 @@ class TiendaTest {
 		
 		try {
 			fabHome.beginTransaction();
-	
-			List<Fabricante> listFab = fabHome.findAll();
-					
-			//TODO STREAMS
-			List<String> lista2fab = listFab.stream().sorted(comparing(Fabricante::getNombre)).skip(3).limit(2).map(
-					f -> "Name: " + f.getNombre() + ", Code: " + f.getCodigo()).toList();
 
-			lista2fab.forEach(f -> System.out.println(f));
-		
+			List<Fabricante> listFab = fabHome.findAll();
+
+			// STREAM:
+			List<String> lista2fab = listFab.stream()
+					.sorted(comparing(Fabricante::getNombre))
+					.skip(3)
+					.limit(2)
+					.map(f -> "Name: " + f.getNombre() + ", Code: " + f.getCodigo())
+					.toList();
+			// CONSOLE OUTPUT:
+			lista2fab.forEach(System.out::println);
+			// ASSERTION:
+			String expectedOutput = "[" +
+					"Name: Hewlett-Packard, Code: 3, " +
+					"Name: Huawei, Code: 8]";
+			assertEquals(expectedOutput,lista2fab.toString());
+
 			fabHome.commitTransaction();
 		}
 		catch (RuntimeException e) {
@@ -357,22 +380,27 @@ class TiendaTest {
 		ProductoHome prodHome = new ProductoHome();	
 		try {
 			prodHome.beginTransaction();
-		
-			List<Producto> listProd = prodHome.findAll();		
-						
-			//TODO STREAMS
-			List<String> productoMasBarato = listProd.stream().sorted(comparing(Producto::getPrecio)).limit(1).map(
-					p -> "Nombre: " + p.getNombre() + ". Precio: " + p.getPrecio()).toList();
 
+			List<Producto> listProd = prodHome.findAll();
+
+			// STREAM:
+			List<String> productoMasBarato = listProd.stream()
+					.sorted(comparing(Producto::getPrecio))
+					.limit(1)
+					.map(p -> "Nombre: " + p.getNombre() + ", Precio: " + p.getPrecio())
+					.toList();
+			// CONSOLE OUTPUT:
 			productoMasBarato.forEach(System.out::println);
-			//System.out.println(productoMasBarato);
+			// ASSERTION:
+			String expectedOutput = "[Nombre: Impresora HP Deskjet 3720, Precio: 59.99]";
+			assertEquals(expectedOutput,productoMasBarato.toString());
+
 			prodHome.commitTransaction();
 		}
 		catch (RuntimeException e) {
 			prodHome.rollbackTransaction();
 		    throw e; // or display error message
 		}
-		
 	}
 	
 	/**
@@ -384,20 +412,27 @@ class TiendaTest {
 		ProductoHome prodHome = new ProductoHome();	
 		try {
 			prodHome.beginTransaction();
-		
-			List<Producto> listProd = prodHome.findAll();		
-						
-			//TODO STREAMS
-			//REPITO TEST ANTERIOR Y SALTO HASTA LA ULTIMA POSICIÓN:
-			//TAMBIEN SE PUEDE HACER ORDENANDO REVERSED Y USANDO LIMIT 1 COMO EN EL ANTERIOR TEST (¿QUIZAS MAS EFICIENTE?)
-			List<String> productoMasCaro = listProd.stream().sorted(comparing(Producto::getPrecio)).skip(listProd.size()-1).map(
-					p -> "Nombre: " + p.getNombre() + ". Precio: " + p.getPrecio()).toList();
 
+			List<Producto> listProd = prodHome.findAll();		
+
+			// REPITO TEST ANTERIOR Y SALTO HASTA LA ULTIMA POSICIÓN:
+			// TAMBIÉN SE PUEDE HACER (¿QUIZÁS MAS EFICIENTE?) ORDENANDO REVERSED Y USANDO LIMIT 1 COMO EN EL ANTERIOR TEST
+			// STREAM:
+			List<String> productoMasCaro = listProd.stream()
+					.sorted(comparing(Producto::getPrecio))
+					.skip(listProd.size()-1)
+					.map(p -> "Nombre: " + p.getNombre() + ". Precio: " + p.getPrecio())
+					.toList();
+			// CONSOLE OUTPUT:
 			productoMasCaro.forEach(System.out::println);
 
-			// OTRA FORMA MÁS EFICIENTE PARA PROTEGERNOS CONTRA UNA COLECCIÓN VACÍA:
-			Optional<Producto> optionalProducto = listProd.stream().sorted(comparing(Producto::getPrecio).reversed()).findFirst();
-			optionalProducto.ifPresent(producto -> System.out.println(producto.getNombre()));
+		// OTRA FORMA MÁS EFICIENTE PARA PROTEGERNOS CONTRA UNA COLECCIÓN VACÍA (CON OPTIONAL):
+			// STREAM 2:
+			Optional<Producto> optionalProducto = listProd.stream()
+					.sorted(comparing(Producto::getPrecio).reversed())
+					.findFirst();
+			// CONSOLE OUTPUT:
+			optionalProducto.ifPresent(p -> System.out.println(p.getNombre()));
 
 			prodHome.commitTransaction();
 		}
@@ -405,12 +440,10 @@ class TiendaTest {
 			prodHome.rollbackTransaction();
 		    throw e; // or display error message
 		}
-		
 	}
 	
 	/**
 	 * 12. Lista el nombre de todos los productos del fabricante cuyo código de fabricante es igual a 2.
-	 * 
 	 */
 	@Test
 	void test12() {
@@ -419,12 +452,14 @@ class TiendaTest {
 		try {
 			prodHome.beginTransaction();
 		
-			List<Producto> listProd = prodHome.findAll();		
-						
-			//TODO STREAMS
-			List<String> productosFabricante2 = listProd.stream().filter(p -> p.getFabricante().getCodigo()==2).map(
-					p -> "Cod Fabricante: " + p.getFabricante().getCodigo() + ", Producto: " + p.getNombre()).toList();
+			List<Producto> listProd = prodHome.findAll();
 
+			// STREAM:
+			List<String> productosFabricante2 = listProd.stream()
+					.filter(p -> p.getFabricante().getCodigo()==2)
+					.map(p -> "Cod Fabricante: " + p.getFabricante().getCodigo() + ", Producto: " + p.getNombre())
+					.toList();
+			// CONSOLE OUTPUT:
 			productosFabricante2.forEach(System.out::println);
 				
 			prodHome.commitTransaction();
@@ -433,7 +468,6 @@ class TiendaTest {
 			prodHome.rollbackTransaction();
 		    throw e; // or display error message
 		}
-		
 	}
 	
 	/**
@@ -446,21 +480,25 @@ class TiendaTest {
 		try {
 			prodHome.beginTransaction();
 		
-			List<Producto> listProd = prodHome.findAll();		
-						
-			//TODO STREAMS
+			List<Producto> listProd = prodHome.findAll();
+
+			// STREAM:
 			List<String> productosMenos120 = listProd.stream().filter(p -> p.getPrecio()<=120).map(
 					p -> p.getNombre() + ", precio: " + p.getPrecio()).toList();
-
+			// CONSOLE OUTPUT:
 			productosMenos120.forEach(System.out::println);
-				
+			// ASSERTION:
+			String expectedOutput = "[Disco duro SATA3 1TB, precio: 86.99, " +
+									"Memoria RAM DDR4 8GB, precio: 120.0, " +
+									"Impresora HP Deskjet 3720, precio: 59.99]";
+			assertEquals(expectedOutput,productosMenos120.toString());
+
 			prodHome.commitTransaction();
 		}
 		catch (RuntimeException e) {
 			prodHome.rollbackTransaction();
 		    throw e; // or display error message
 		}
-		
 	}
 	
 	/**
@@ -475,11 +513,18 @@ class TiendaTest {
 		
 			List<Producto> listProd = prodHome.findAll();		
 						
-			//TODO STREAMS
-			List<String> productosMas400 = listProd.stream().filter(p -> p.getPrecio()>=400).map(
-					p -> p.getNombre() + ", precio: " + p.getPrecio()).toList();
-
+			// STREAM:
+			List<String> productosMas400 = listProd.stream()
+					.filter(p -> p.getPrecio()>=400)
+					.map(p -> p.getNombre() + ", precio: " + p.getPrecio())
+					.toList();
+			// CONSOLE OUTPUT:
 			productosMas400.forEach(System.out::println);
+			// ASSERTION:
+			String expectedOutput = "[GeForce GTX 1080 Xtreme, precio: 755.0, " +
+									"Portátil Yoga 520, precio: 559.0, " +
+									"Portátil Ideapd 320, precio: 444.0]";
+			assertEquals(expectedOutput,productosMas400.toString());
 				
 			prodHome.commitTransaction();
 		}
@@ -487,7 +532,6 @@ class TiendaTest {
 			prodHome.rollbackTransaction();
 		    throw e; // or display error message
 		}
-		
 	}
 	
 	/**
@@ -500,12 +544,14 @@ class TiendaTest {
 		try {
 			prodHome.beginTransaction();
 		
-			List<Producto> listProd = prodHome.findAll();	
-			
-			//TODO STREAMS
-			List<String> productosEntre80y300 = listProd.stream().filter(p -> p.getPrecio()>=80 && p.getPrecio()<=300).map(
-					p -> p.getNombre() + ", precio: " + p.getPrecio()).toList();
+			List<Producto> listProd = prodHome.findAll();
 
+			// STREAM:
+			List<String> productosEntre80y300 = listProd.stream()
+					.filter(p -> p.getPrecio()>=80 && p.getPrecio()<=300)
+					.map(p -> p.getNombre() + ", precio: " + p.getPrecio())
+					.toList();
+			// CONSOLE OUTPUT:
 			productosEntre80y300.forEach(System.out::println);
 				
 			prodHome.commitTransaction();
@@ -514,7 +560,6 @@ class TiendaTest {
 			prodHome.rollbackTransaction();
 		    throw e; // or display error message
 		}
-		
 	}
 	
 	/**
@@ -527,21 +572,24 @@ class TiendaTest {
 		try {
 			prodHome.beginTransaction();
 		
-			List<Producto> listProd = prodHome.findAll();		
-						
-			//TODO STREAMS
-			List<String> productosFab6yMas200 = listProd.stream().filter(p -> p.getPrecio()>200 && p.getFabricante().getCodigo()==6).map(
-					p -> p.getNombre() + ", precio: " + p.getPrecio() + "(cod Fab: " + p.getFabricante().getCodigo() + ")").toList();
-
+			List<Producto> listProd = prodHome.findAll();
+			// STREAM:
+			List<String> productosFab6yMas200 = listProd.stream()
+					.filter(p -> p.getPrecio()>200 && p.getFabricante().getCodigo()==6)
+					.map(p -> p.getNombre() + ", precio: " + p.getPrecio() + " (cod Fab: " + p.getFabricante().getCodigo() + ")")
+					.toList();
+			// CONSOLE OUTPUT:
 			productosFab6yMas200.forEach(System.out::println);
-				
+			// ASSERTION:
+			String expectedOutput = "[GeForce GTX 1080 Xtreme, precio: 755.0 (cod Fab: 6)]";
+			assertEquals(expectedOutput,productosFab6yMas200.toString());
+
 			prodHome.commitTransaction();
 		}
 		catch (RuntimeException e) {
 			prodHome.rollbackTransaction();
 		    throw e; // or display error message
 		}
-		
 	}
 	
 	/**
@@ -555,16 +603,18 @@ class TiendaTest {
 			prodHome.beginTransaction();
 		
 			List<Producto> listProd = prodHome.findAll();		
-			
-			//TODO STREAMS
+
+			// SET USED TO FILTER:
 			Set<Integer> codigosSeleccionados = new HashSet<>();
 			codigosSeleccionados.add(1);
 			codigosSeleccionados.add(3);
 			codigosSeleccionados.add(5);
-
-			List<String> listaProdFab135 = listProd.stream().filter(p -> codigosSeleccionados.contains(p.getFabricante().getCodigo())).map(
-					p -> p.getNombre() + ", precio: " + p.getPrecio() + " (cod Fab: " + p.getFabricante().getCodigo() + ")").toList();
-
+			// STREAM:
+			List<String> listaProdFab135 = listProd.stream()
+					.filter(p -> codigosSeleccionados.contains(p.getFabricante().getCodigo()))
+					.map(p -> p.getNombre() + ", precio: " + p.getPrecio() + " (cod Fab: " + p.getFabricante().getCodigo() + ")")
+					.toList();
+			// CONSOLE OUTPUT:
 			listaProdFab135.forEach(System.out::println);
 
 			prodHome.commitTransaction();
@@ -573,7 +623,6 @@ class TiendaTest {
 			prodHome.rollbackTransaction();
 		    throw e; // or display error message
 		}
-		
 	}
 	
 	/**
@@ -587,11 +636,12 @@ class TiendaTest {
 			prodHome.beginTransaction();
 		
 			List<Producto> listProd = prodHome.findAll();		
-			
-			//TODO STREAMS
-			List<String> listaPrecioCentimos = listProd.stream().map(
-					p->  "Nombre: " + p.getNombre() + ", Precio: " + p.getPrecio()*100 + " cents").toList();
 
+			// STREAM:
+			List<String> listaPrecioCentimos = listProd.stream()
+					.map(p->  "Nombre: " + p.getNombre() + ", Precio: " + p.getPrecio()*100 + " cents")
+					.toList();
+			// CONSOLE OUTPUT:
 			listaPrecioCentimos.forEach(System.out::println);
 				
 			prodHome.commitTransaction();
@@ -600,7 +650,6 @@ class TiendaTest {
 			prodHome.rollbackTransaction();
 		    throw e; // or display error message
 		}
-		
 	}
 	
 	
@@ -609,8 +658,7 @@ class TiendaTest {
 	 */
 	@Test
 	void test19() {
-	
-	
+
 		FabricanteHome fabHome = new FabricanteHome();
 		
 		try {
@@ -618,19 +666,23 @@ class TiendaTest {
 	
 			List<Fabricante> listFab = fabHome.findAll();
 					
-			//TODO STREAMS
-			List<String> listaFabricantes = listFab.stream().filter(f -> f.getNombre().toLowerCase().startsWith("s")).map(
-					f -> "Fabricante: " + f.getNombre()).toList();
+			// STREAM:
+			List<String> listaFabricantesS = listFab.stream()
+					.filter(f -> f.getNombre().toLowerCase().startsWith("s"))
+					.map(f -> f.getNombre())
+					.toList();
+			// CONSOLE OUTPUT:
+			listaFabricantesS.forEach(System.out::println);
+			// ASSERTION:
+			String expectedOutput = "[Samsung, Seagate]";
+			assertEquals(expectedOutput, listaFabricantesS.toString());
 
-			listaFabricantes.forEach(f -> System.out.println(f));
-		
 			fabHome.commitTransaction();
 		}
 		catch (RuntimeException e) {
 			fabHome.rollbackTransaction();
 		    throw e; // or display error message
 		}
-		
 	}
 	
 	/**
@@ -639,18 +691,22 @@ class TiendaTest {
 	@Test
 	void test20() {
 
-
 		ProductoHome prodHome = new ProductoHome();	
 		try {
 			prodHome.beginTransaction();
 		
 			List<Producto> listProd = prodHome.findAll();
-			
-			//TODO STREAMS
-			List<String> listaPortatiles = listProd.stream().filter(p -> p.getNombre().contains("Portátil")).map(
-					Producto::getNombre).toList();
 
+			// STREAM:
+			List<String> listaPortatiles = listProd.stream()
+					.filter(p -> p.getNombre().contains("Portátil"))
+					.map(Producto::getNombre)
+					.toList();
+			// CONSOLE OUTPUT:
 			listaPortatiles.forEach(System.out::println);
+			// ASSERTION:
+			String expectedoutput = "[Portátil Yoga 520, Portátil Ideapd 320]";
+			assertEquals(expectedoutput, listaPortatiles.toString());
 
 			prodHome.commitTransaction();
 		}
@@ -658,7 +714,6 @@ class TiendaTest {
 			prodHome.rollbackTransaction();
 		    throw e; // or display error message
 		}
-		
 	}
 	
 	/**
@@ -666,27 +721,30 @@ class TiendaTest {
 	 */
 	@Test
 	void test21() {
-	
-	
+
 		ProductoHome prodHome = new ProductoHome();	
 		try {
 			prodHome.beginTransaction();
 		
 			List<Producto> listProd = prodHome.findAll();
 			
-			//TODO STREAMS
-			List<String> listaMonitores = listProd.stream().filter(p -> p.getNombre().contains("Monitor") && p.getPrecio()<215).map(
-					p -> p.getNombre() + ", precio: " + p.getPrecio()).toList();
-
+			// STREAM:
+			List<String> listaMonitores = listProd.stream()
+					.filter(p -> p.getNombre().contains("Monitor") && p.getPrecio()<215)
+					.map(p -> p.getNombre() + ", precio: " + p.getPrecio())
+					.toList();
+			// CONSOLE OUTPUT:
 			listaMonitores.forEach(System.out::println);
-				
+			// ASSERTION:
+			String expectedOutput = "[Monitor 24 LED Full HD, precio: 202.0]";
+			assertEquals(expectedOutput, listaMonitores.toString());
+
 			prodHome.commitTransaction();
 		}
 		catch (RuntimeException e) {
 			prodHome.rollbackTransaction();
 		    throw e; // or display error message
 		}
-		
 	}
 	
 	/**
@@ -695,21 +753,20 @@ class TiendaTest {
 	 */
 	@Test
 	void test22() {
-		
-		
+
 		ProductoHome prodHome = new ProductoHome();	
 		try {
 			prodHome.beginTransaction();
 		
 			List<Producto> listProd = prodHome.findAll();
 			
-			//TODO STREAMS
+			// STREAM:
 			List<String> productosMas180order = listProd.stream()
 					.filter(p -> p.getPrecio()>=180)
 					.sorted(comparing(Producto::getPrecio).reversed().thenComparing(comparing(Producto::getNombre)))
 					.map(p -> p.getNombre() + ", precio: " + p.getPrecio())
 					.toList();
-
+			// CONSOLE OUTPUT:
 			productosMas180order.forEach(System.out::println);
 				
 			prodHome.commitTransaction();
@@ -718,7 +775,6 @@ class TiendaTest {
 			prodHome.rollbackTransaction();
 		    throw e; // or display error message
 		}
-		
 	}
 	
 	/**
@@ -734,10 +790,12 @@ class TiendaTest {
 		
 			List<Producto> listProd = prodHome.findAll();
 			
-			//TODO STREAMS
-			List<String> listaProductosPorFabricante = listProd.stream().sorted(comparing(p -> p.getFabricante().getNombre())).map(
-					p -> p.getNombre() + ", precio: " + p.getPrecio() + "€, Fab: " + p.getFabricante().getNombre().toUpperCase()).toList();
-
+			// STREAM:
+			List<String> listaProductosPorFabricante = listProd.stream()
+					.sorted(comparing(p -> p.getFabricante().getNombre()))
+					.map(p -> p.getNombre() + ", precio: " + p.getPrecio() + "€, Fab: " + p.getFabricante().getNombre().toUpperCase())
+					.toList();
+			// CONSOLE OUTPUT:
 			listaProductosPorFabricante.forEach(System.out::println);
 			
 			prodHome.commitTransaction();
@@ -746,7 +804,6 @@ class TiendaTest {
 			prodHome.rollbackTransaction();
 		    throw e; // or display error message
 		}
-		
 	}
 	
 	/**
@@ -761,10 +818,11 @@ class TiendaTest {
 		
 			List<Producto> listProd = prodHome.findAll();
 			
-			//TODO STREAMS
-			Optional<String> productoMasCaro = listProd.stream().max(comparing(Producto::getPrecio)).map(
-					p -> p.getNombre() + ", precio: " + p.getPrecio() + "€, Fab: " + p.getFabricante().getNombre());
-
+			// STREAM:
+			Optional<String> productoMasCaro = listProd.stream()
+					.max(comparing(Producto::getPrecio))
+					.map(p -> p.getNombre() + ", precio: " + p.getPrecio() + "€, Fab: " + p.getFabricante().getNombre());
+			// CONSOLE OUTPUT:
 			productoMasCaro.ifPresent(System.out::println);
 			
 			prodHome.commitTransaction();
@@ -773,7 +831,6 @@ class TiendaTest {
 			prodHome.rollbackTransaction();
 		    throw e; // or display error message
 		}
-		
 	}
 	
 	/**
@@ -788,13 +845,16 @@ class TiendaTest {
 		
 			List<Producto> listProd = prodHome.findAll();
 			
-			//TODO STREAMS
+			// STREAM:
 			List<String> productosCrucialMas200 = listProd.stream()
 					.filter(p -> p.getFabricante().getNombre().equalsIgnoreCase("crucial") && p.getPrecio()>200)
 					.map(p -> p.getNombre() + ", precio: " + p.getPrecio() + "€, Fab: " + p.getFabricante().getNombre())
 					.toList();
-
+			// CONSOLE OUTPUT
 			productosCrucialMas200.forEach(System.out::println);
+			// ASSERTION:
+			String expectedOutput = "[GeForce GTX 1080 Xtreme, precio: 755.0€, Fab: Crucial]";
+			assertEquals(expectedOutput, productosCrucialMas200.toString());
 			
 			prodHome.commitTransaction();
 		}
@@ -802,7 +862,6 @@ class TiendaTest {
 			prodHome.rollbackTransaction();
 		    throw e; // or display error message
 		}
-		
 	}
 	
 	/**
@@ -817,17 +876,17 @@ class TiendaTest {
 		
 			List<Producto> listProd = prodHome.findAll();
 			
-			//TODO STREAMS
+			// LIST USED TO FILTER:
 			List<String> fabricantesSeleccionados = new ArrayList<>();
 			fabricantesSeleccionados.add("asus");
 			fabricantesSeleccionados.add("hewlett-packard");
 			fabricantesSeleccionados.add("seagate");
-
+			// STREAM:
 			List<String> productosFabSeleccionados = listProd.stream()
 					.filter(p -> fabricantesSeleccionados.contains(p.getFabricante().getNombre().toLowerCase()))
 					.map(p -> p.getNombre() + ", precio: " + p.getPrecio() + "€, Fab: " + p.getFabricante().getNombre())
 					.toList();
-
+			// CONSOLE OUTPUT:
 			productosFabSeleccionados.forEach(System.out::println);
 			
 			prodHome.commitTransaction();
@@ -836,7 +895,6 @@ class TiendaTest {
 			prodHome.rollbackTransaction();
 		    throw e; // or display error message
 		}
-		
 	}
 	
 	/**
@@ -862,23 +920,24 @@ class TiendaTest {
 		
 			List<Producto> listProd = prodHome.findAll();
 
+			// LIST OF MAXIMUN CHARACTER SIZE FOR EACH TABLE FIELD:
 			List<Integer> medidasMax = new ArrayList<>();
-
 			medidasMax.add(listProd.stream().mapToInt(p -> p.getNombre().length()).max().getAsInt());
 			medidasMax.add(listProd.stream().mapToInt(p -> String.valueOf(p.getPrecio()).length()).max().getAsInt());
 			medidasMax.add(listProd.stream().mapToInt(p -> p.getFabricante().getNombre().length()).max().getAsInt());
 
-			// " ".repeat
+			// STREAM (using " ".repeat)
 			String tablaProductosMas180 = listProd.stream()
 					.filter(p -> p.getPrecio()>=180)
 					.sorted(comparing(Producto::getPrecio).reversed().thenComparing(Producto::getNombre))
 					.map(p-> p.getNombre() + " ".repeat(medidasMax.get(0)-(p.getNombre().length())) +
 							"|" + p.getPrecio() + " ".repeat(medidasMax.get(1)-((String.valueOf(p.getPrecio())).length())) +
-							"|" + p.getFabricante().getNombre() + " ".repeat(medidasMax.get(2)-(p.getFabricante().getNombre().length())) + "\n").collect(joining());
+							"|" + p.getFabricante().getNombre() + " ".repeat(medidasMax.get(2)-(p.getFabricante().getNombre().length())) + "\n")
+					.collect(joining());
 
-
+			// CONSOLE OUTPUT:
 			String header = "Producto                       Precio      Fabricante\n" +
-					"-----------------------------------------------------\n";
+							"-----------------------------------------------------\n";
 			System.out.println("" + header + tablaProductosMas180.toString());
 
 			prodHome.commitTransaction();
@@ -887,7 +946,6 @@ class TiendaTest {
 			prodHome.rollbackTransaction();
 		    throw e; // or display error message
 		}
-		
 	}
 	
 	/**
@@ -954,10 +1012,14 @@ Fabricante: Xiaomi
 	
 			List<Fabricante> listFab = fabHome.findAll();
 
-			// collect(joinning)
+			// STREAM:
 			List<String> tablaFabricantesyProductos = listFab.stream()
-					.map(f -> "\nFabricante: " + f.getNombre() + "\n\n\tProductos:" + f.getProductos().stream().map(p -> "\n\t" + p.getNombre() + "").collect(joining())).toList();
-
+					.map(f -> "\nFabricante: " + f.getNombre() + "\n\n\tProductos:" + f.getProductos()
+							.stream()
+							.map(p -> "\n\t" + p.getNombre() + "")
+							.collect(joining()))
+					.toList();
+			// CONSOLE OUTPUT:
 			tablaFabricantesyProductos.forEach(System.out::println);
 
 			fabHome.commitTransaction();
@@ -980,11 +1042,18 @@ Fabricante: Xiaomi
 			fabHome.beginTransaction();
 	
 			List<Fabricante> listFab = fabHome.findAll();
-					
-			//TODO STREAMS
-			List<String> listaEmptyFab = listFab.stream().filter(fabricante -> fabricante.getProductos().isEmpty()).map(f -> f.getNombre()).toList();
+
+			// STREAM:
+			List<String> listaEmptyFab = listFab.stream()
+					.filter(fabricante -> fabricante.getProductos().isEmpty())
+					.map(f -> f.getNombre())
+					.toList();
+			// CONSOLE OUTPUT:
 			listaEmptyFab.forEach(System.out::println);
-								
+			// ASSERTION:
+			String expectedOutput = "[Huawei, Xiaomi]";
+			assertEquals(expectedOutput, listaEmptyFab.toString());
+
 			fabHome.commitTransaction();
 		}
 		catch (RuntimeException e) {
@@ -1005,17 +1074,19 @@ Fabricante: Xiaomi
 		
 			List<Producto> listProd = prodHome.findAll();		
 						
-			//TODO STREAMS
+			// STREAM:
 			long totalProductos = listProd.stream().count();
+			// CONSOLE OUTPUT:
 			System.out.println(totalProductos);
-			
+			// ASSERTION:
+			assertEquals(11, totalProductos);
+
 			prodHome.commitTransaction();
 		}
 		catch (RuntimeException e) {
 			prodHome.rollbackTransaction();
 		    throw e; // or display error message
 		}
-		
 	}
 
 	
@@ -1031,9 +1102,15 @@ Fabricante: Xiaomi
 		
 			List<Producto> listProd = prodHome.findAll();		
 						
-			//TODO STREAMS
-			long totalFabricantesProd = listProd.stream().map(p -> p.getFabricante()).distinct().count();
+			// STREAM:
+			long totalFabricantesProd = listProd.stream()
+					.map(p -> p.getFabricante())
+					.distinct()
+					.count();
+			// CONSOLE OUTPUT:
 			System.out.println(totalFabricantesProd);
+			// ASSERTION:
+			assertEquals(7, totalFabricantesProd);
 			
 			prodHome.commitTransaction();
 		}
@@ -1041,7 +1118,6 @@ Fabricante: Xiaomi
 			prodHome.rollbackTransaction();
 		    throw e; // or display error message
 		}
-		
 	}
 	
 	/**
@@ -1056,9 +1132,12 @@ Fabricante: Xiaomi
 		
 			List<Producto> listProd = prodHome.findAll();		
 						
-			//TODO STREAMS
+			// STREAM:
 			double mediaPrecioProductos = listProd.stream().map(Producto::getPrecio).reduce(0.0, Double::sum)/listProd.size();
+			// CONSOLE OUTPUT:
 			System.out.println(mediaPrecioProductos);
+			// ASSERTION:
+			assertEquals(271.7236363636364, mediaPrecioProductos);
 
 			prodHome.commitTransaction();
 		}
@@ -1080,9 +1159,15 @@ Fabricante: Xiaomi
 		
 			List<Producto> listProd = prodHome.findAll();		
 						
-			//TODO STREAMS
-			double precioMasBarato = listProd.stream().min(comparing(Producto::getPrecio)).map(Producto::getPrecio).get();
+			// STREAM:
+			double precioMasBarato = listProd.stream()
+					.min(comparing(Producto::getPrecio))
+					.map(Producto::getPrecio)
+					.get();
+			// CONSOLE OUTPUT:
 			System.out.println(precioMasBarato);
+			// ASSERTION:
+			assertEquals(59.99, precioMasBarato);
 
 			prodHome.commitTransaction();
 		}
@@ -1090,7 +1175,6 @@ Fabricante: Xiaomi
 			prodHome.rollbackTransaction();
 		    throw e; // or display error message
 		}
-		
 	}
 	
 	/**
@@ -1105,17 +1189,21 @@ Fabricante: Xiaomi
 		
 			List<Producto> listProd = prodHome.findAll();		
 						
-			//TODO STREAMS
-			double sumaPrecioProductos = listProd.stream().map(Producto::getPrecio).reduce(0.0, Double::sum);
+			// STREAM:
+			double sumaPrecioProductos = listProd.stream()
+					.map(Producto::getPrecio)
+					.reduce(0.0, Double::sum);
+			// CONSOLE OUTPUT:
 			System.out.println(sumaPrecioProductos);
-			
+			// ASSERTION:
+			assertEquals(2988.96, sumaPrecioProductos);
+
 			prodHome.commitTransaction();
 		}
 		catch (RuntimeException e) {
 			prodHome.rollbackTransaction();
 		    throw e; // or display error message
 		}
-		
 	}
 	
 	/**
