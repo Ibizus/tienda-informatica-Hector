@@ -1478,7 +1478,7 @@ Hewlett-Packard              2
 							.mapToDouble(Producto::getPrecio)
 							.sum() > 1000)
 					.map(Fabricante::getNombre)
-					.collect(Collectors.toList());
+					.toList();
 
 			listaFabMAs1000.forEach(System.out::println);
 		
