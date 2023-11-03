@@ -1329,7 +1329,7 @@ Hewlett-Packard              2
 				
 			List<Fabricante> listFab = fabHome.findAll();
 				
-			// STREAM MAPA FABRICANTE MAS NUMERO PROD:
+			// STREAM MAPA FABRICANTE MAS NÚMERO PROD:
 			Map<String, Long> fabricantesConNumeroProductos = listFab.stream()
 					.collect(Collectors.toMap(
 							Fabricante::getNombre,
